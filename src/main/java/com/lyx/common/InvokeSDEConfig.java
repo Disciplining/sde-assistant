@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * 山东e出行平台调用配置
  */
-@Component
+@Component("sdeInvoker")
 public class InvokeSDEConfig
 {
     @Autowired

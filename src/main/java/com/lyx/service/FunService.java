@@ -46,7 +46,7 @@ public class FunService
         List<InfoItem> resultList = CollUtil.newArrayList();
         for (JsonNode el : dataList)
         {
-            resultList.add(this.transformOneToInfoItem(startCityId, startDate, el));
+            resultList.add(this.transformOneToInfoItem(startCityId, el));
         }
 
         return CommonResult.successData(CollUtil.sortByProperty(resultList, "leftSeatNum"));
@@ -57,7 +57,7 @@ public class FunService
      * @param one 一条车次信息
      * @return 车次信息
      */
-    private InfoItem transformOneToInfoItem(String startCityId, Date startDate, JsonNode one)
+    private InfoItem transformOneToInfoItem(String startCityId, JsonNode one)
     {
         InfoItem infoItem = new InfoItem();
 
@@ -98,7 +98,7 @@ public class FunService
             }
             else
             {
-                infoItem.setSendTime(DateUtil.formatDate(startDate) + " " + sendTime);
+                infoItem.setSendTime(sendTime);
             }
         }
         catch (JsonProcessingException e)

@@ -14,12 +14,13 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.5.5'
-    implementation 'cn.hutool:hutool-all:5.7.13'
-    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+    implementation 'org.springframework.boot:spring-boot-starter' // springboot-web 启动器
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' // springboot 测试
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.5.5' // springboot-web
+    implementation 'cn.hutool:hutool-all:5.7.13' // hutool
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.20' // lombok
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.20' // lombok
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13' // httpclient
 }
 
 test {

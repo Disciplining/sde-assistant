@@ -1,7 +1,7 @@
 package com.lyx.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service("funService")
 public class FunService
@@ -39,12 +40,16 @@ public class FunService
         {
             return result;
         }
-        JsonNode data = result.getData();
+        JsonNode dataList = result.getData();
 
+        // ②转换数据
+        List<InfoItem> resultList = CollUtil.newArrayList();
+        for (JsonNode el : dataList)
+        {
+            resultList.add(this.transformOneToInfoItem(startCityId, startDate, el));
+        }
 
-        Console.log("结果数据：{}", result);
-
-        return null;
+        return CommonResult.successData(CollUtil.sortByProperty(resultList, "leftSeatNum"));
     }
 
     /**
@@ -52,7 +57,7 @@ public class FunService
      * @param one 一条车次信息
      * @return 车次信息
      */
-    private InfoItem transformOneToInfoItem(JsonNode one)
+    private InfoItem transformOneToInfoItem(String startCityId, Date startDate, JsonNode one)
     {
         InfoItem infoItem = new InfoItem();
 
@@ -60,13 +65,26 @@ public class FunService
         infoItem.setShiftNum(one.get("shiftNum").asText() + "次");
 
         // 剩余车票
-        infoItem.setLeftSeatNum(14); // TODO 剩余车票
         ObjectNode shiftId = oMapper.createObjectNode();
         shiftId.put("stationId", one.get("stationId").asText());
         shiftId.put("sendDate", one.get("sendDate").asText());
         shiftId.put("sendTime", one.get("sendTime").asText());
         shiftId.put("shiftNum", one.get("shiftNum").asText());
         shiftId.put("portName", one.get("portName").asText());
+
+        String url = "/suit?ttsId=&startId={p0}&shiftId={p1}&isWeixin=0";
+
+        CommonResult<JsonNode> leftSeatNumNode = invokeSDEConfig.get(url, startCityId, shiftId.toString());
+        if (leftSeatNumNode.isSuccess())
+        {
+            int num = leftSeatNumNode.getData().at("/shiftInfo/leftSeatNum").asInt();
+            infoItem.setLeftSeatNum(num);
+        }
+        else
+        {
+            infoItem.setLeftSeatNum(-1);
+        }
+
 
         // 发车时间
         JsonNode memo;
@@ -77,6 +95,10 @@ public class FunService
             if (StrUtil.contains(sendTime, "-"))
             {
                 infoItem.setSendTime("流水班");
+            }
+            else
+            {
+                infoItem.setSendTime(DateUtil.formatDate(startDate) + " " + sendTime);
             }
         }
         catch (JsonProcessingException e)

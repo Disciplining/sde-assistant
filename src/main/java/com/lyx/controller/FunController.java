@@ -1,9 +1,11 @@
 package com.lyx.controller;
 
+import cn.hutool.core.date.DatePattern;
 import com.lyx.common.CommonResult;
 import com.lyx.service.FunService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +24,7 @@ public class FunController
      */
     @GetMapping("/get-data")
     public CommonResult getData(@RequestParam String startCityId, @RequestParam String startCityName,
-                                @RequestParam String endCityName, @RequestParam Date startDate)
+                                @RequestParam String endCityName, @RequestParam @DateTimeFormat(pattern = DatePattern.NORM_DATE_PATTERN) Date startDate)
     {
         return funService.getData(startCityId, startCityName, endCityName, startDate);
     }

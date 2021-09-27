@@ -16,6 +16,13 @@ public class CommonResult<T>
     private boolean success;
 
     /**
+     * 状态码
+     * 0  - 处理成功
+     * -1 - 处理失败
+     */
+    private Integer code;
+
+    /**
      * 返回数据
      */
     private T data;
@@ -23,7 +30,7 @@ public class CommonResult<T>
     /**
      * 处理失败时的错误信息
      */
-    private String errorMsg;
+    private String msg;
 
 
 
@@ -39,7 +46,7 @@ public class CommonResult<T>
         return "CommonResult{" +
                 "success=" + success +
                 ", data=" + data +
-                ", errorMsg='" + errorMsg + '\'' +
+                ", errorMsg='" + msg + '\'' +
                 '}';
     }
 
@@ -49,6 +56,7 @@ public class CommonResult<T>
     {
         CommonResult<Object> result = new CommonResult<>();
         result.success = true;
+        result.code = 0;
         return result;
     }
 
@@ -56,6 +64,7 @@ public class CommonResult<T>
     {
         CommonResult<R> result = new CommonResult<R>();
         result.success = true;
+        result.code = 0;
         result.data = data;
 
         return result;
@@ -65,6 +74,7 @@ public class CommonResult<T>
     {
         CommonResult<Object> result = new CommonResult<>();
         result.success = false;
+        result.code = -1;
         return result;
     }
 
@@ -72,7 +82,8 @@ public class CommonResult<T>
     {
         CommonResult<Object> result = new CommonResult<>();
         result.success = false;
-        result.errorMsg = msg;
+        result.msg = msg;
+        result.code = -1;
         return result;
     }
 }

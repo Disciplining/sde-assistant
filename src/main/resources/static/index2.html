@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>首页</title>
+
+        <meta charset="utf-8">
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/layui/2.6.8/css/layui.min.css" integrity="sha512-iQBJbsNHXUcgEIgWThd2dr8tOdKPvICwqjPEZYY81z3eMya44A5MiAqfWSCh+Ee1YzNYkdrI982Qhwgr8LEYOQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </head>
+
+    <body>
+
+        <div class="layui-container">
+            <form class="layui-form layui-form-pane" action="" lay-filter="example">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">起点-代号</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="startCityId" lay-verify="title" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">起点-名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="startCityName" lay-verify="title" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">终点-名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="endCityName" lay-verify="title" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">中文版</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input" id="startDate" name="startDate">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="search">查询</button>
+                    </div>
+                </div>
+            </form>
+
+            <table class="layui-hide" id="info"></table>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/layui/2.6.8/layui.min.js" integrity="sha512-EKrFvch3qTzLFQgjbcjpsRmF8T3UCtc9ojtMAu6dvvP+bV8qYUDOaQ84nwYCkSLT7lbqGoya/Kf+8fyCBE0vRg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script>
+            layui.use
+            (
+                ['form', 'layer', 'laydate', 'table'],
+                function()
+                {
+                    // ①获得模块
+                    var form = layui.form;
+                    var layer = layui.layer;
+                    var laydate = layui.laydate;
+                    var table = layui.table;
+
+                    // ②日期组件
+                    laydate.render({elem: '#startDate'});
+
+                    // ③监听提交
+                    form.on
+                    (
+                        'submit(search)',
+                        function(data)
+                        {
+                            // 检查是否为空
+                            // let obj = data.field;
+                            // Object.keys(obj).forEach
+                            // (
+                            //     function (key)
+                            //     {
+                            //         let value = obj[key];
+                            //         if(typeof value==="undefined" || value===null || value==='')
+                            //         {
+                            //             layer.alert("存在未填项", {title: '错误信息'})
+                            //         }
+                            //     }
+                            // );
+
+
+                            generateDataList(table, 1,1,1,1);
+                            // layer.alert(JSON.stringify(data.field), {title: '最终的提交信息22'})
+                            return false;
+                        }
+                    );
+                }
+            );
+
+            /**
+             * 生成数据表格函数
+             * @param table         layui表格对象
+             * @param startCityId   url参数
+             * @param startCityName url参数
+             * @param endCityName   url参数
+             * @param startDate     url参数
+             */
+            function generateDataList(table, startCityId, startCityName, endCityName, startDate)
+            {
+                table.render
+                (
+                    {
+                        elem: '#info',
+                        url:'/get-data?startCityId=37010001&startCityName=济南&endCityName=沂水&startDate=2021-10-01',
+                        cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                        cols:
+                            [
+                                [
+                                    {field:'leftSeatNum', title: '剩余车票'},
+                                    {field:'shiftNum', title: '车次'},
+                                    {field:'sendTime', title: '发车时间'},
+                                    {field:'workOvertime', title: '是否为加班'},
+                                    {field:'stationName', title: '始发车站'}
+                                ]
+                            ]
+                    }
+                );
+            }
+    </script>
+
+    </body>
+</html>

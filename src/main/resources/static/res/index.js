@@ -11,6 +11,7 @@ layui.use
 
         // ②日期组件
         laydate.render({elem: '#startDate'});
+        laydate.render({elem: '#quick1date'});
 
         // ③监听提交
         form.on
@@ -48,7 +49,14 @@ layui.use
             'submit(quick1)',
             function (data)
             {
-                console.log("这是快捷的 ", data);
+                let quick1Date = data.field.quick1date;
+                if (typeof quick1Date==="undefined" || quick1Date===null || quick1Date==='')
+                {
+                    layer.alert("出发日期未填", {title: '错误信息'});
+                    return false;
+                }
+
+                generateDataList(table, '37010001', '济南', '沂水', quick1Date);
                 return false;
             }
         );

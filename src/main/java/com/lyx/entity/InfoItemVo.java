@@ -6,7 +6,7 @@ import lombok.Data;
  * 一个车辆信息
  */
 @Data
-public class InfoItem
+public class InfoItemVo
 {
     /**
      * 车次，唯一标识.
@@ -25,9 +25,8 @@ public class InfoItem
 
     /**
      * 是不是加班车
-     * true-是  false-不是
      */
-    private Boolean workOvertime;
+    private String workOvertime;
 
     /**
      * 始发车站

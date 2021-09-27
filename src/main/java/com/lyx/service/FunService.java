@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.lyx.common.CommonResult;
 import com.lyx.common.InvokeSDEConfig;
-import com.lyx.entity.InfoItem;
+import com.lyx.entity.InfoItemVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class FunService
         JsonNode dataList = result.getData();
 
         // ②转换数据
-        List<InfoItem> resultList = CollUtil.newArrayList();
+        List<InfoItemVo> resultList = CollUtil.newArrayList();
         for (JsonNode el : dataList)
         {
             resultList.add(this.transformOneToInfoItem(startCityId, el));
@@ -57,12 +57,12 @@ public class FunService
      * @param one 一条车次信息
      * @return 车次信息
      */
-    private InfoItem transformOneToInfoItem(String startCityId, JsonNode one)
+    private InfoItemVo transformOneToInfoItem(String startCityId, JsonNode one)
     {
-        InfoItem infoItem = new InfoItem();
+        InfoItemVo infoItemVo = new InfoItemVo();
 
         // 车次
-        infoItem.setShiftNum(one.get("shiftNum").asText() + "次");
+        infoItemVo.setShiftNum(one.get("shiftNum").asText() + "次");
 
         // 剩余车票
         ObjectNode shiftId = oMapper.createObjectNode();
@@ -78,11 +78,11 @@ public class FunService
         if (leftSeatNumNode.isSuccess())
         {
             int num = leftSeatNumNode.getData().at("/shiftInfo/leftSeatNum").asInt();
-            infoItem.setLeftSeatNum(num);
+            infoItemVo.setLeftSeatNum(num);
         }
         else
         {
-            infoItem.setLeftSeatNum(-1);
+            infoItemVo.setLeftSeatNum(-1);
         }
 
 
@@ -94,31 +94,31 @@ public class FunService
             String sendTime = memo.get("sendTime").asText();
             if (StrUtil.contains(sendTime, "-"))
             {
-                infoItem.setSendTime("流水班");
+                infoItemVo.setSendTime("流水班");
             }
             else
             {
-                infoItem.setSendTime(sendTime);
+                infoItemVo.setSendTime(sendTime);
             }
         }
         catch (JsonProcessingException e)
         {
-            infoItem.setSendTime("反序列化出错");
+            infoItemVo.setSendTime("反序列化出错");
         }
 
         // 是不是加班车
         if (StrUtil.contains(one.get("companyName").asText(), "加班"))
         {
-            infoItem.setWorkOvertime(true);
+            infoItemVo.setWorkOvertime("加班车");
         }
         else
         {
-            infoItem.setWorkOvertime(false);
+            infoItemVo.setWorkOvertime("非加班车");
         }
 
         // 始发车站
-        infoItem.setStationName(one.get("stationName").asText());
+        infoItemVo.setStationName(one.get("stationName").asText());
 
-        return infoItem;
+        return infoItemVo;
     }
 }

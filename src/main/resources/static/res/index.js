@@ -1,3 +1,26 @@
+/**
+ * 缓存出发地点
+ */
+$.ajax
+(
+    {
+        url : 'https://m.xintuyun.cn/book/startPoint?ttsId=', //请求的url
+        type : 'GET', //以何种方法发送报文
+        dataType : 'json', //预期的服务器返回的数据类型
+        success : function () //请求成功执行的访求
+        {
+            console.log('请求成功');
+        },
+        error : function () //请求失败执行的方法
+        {
+            console.log('缓存出发地点');
+        }
+    }
+);
+
+
+
+
 layui.use
 (
     ['form', 'layer', 'laydate', 'table'],
@@ -10,11 +33,12 @@ layui.use
         var table = layui.table;
 
         // ②日期组件
-        laydate.render({elem: '#startDate'});
-        laydate.render({elem: '#quick1date'});
+        laydate.render({elem: '#startDate', min: dateFormat(new Date(), 'yyyy-MM-dd')});
+        laydate.render({elem: '#quick1date', min: dateFormat(new Date(), 'yyyy-MM-dd')});
+        laydate.render({elem: '#quick2date', min: dateFormat(new Date(), 'yyyy-MM-dd')});
 
         // ③监听提交
-        form.on
+        form.on // 任意地址
         (
             'submit(search)',
             function(data)
@@ -44,7 +68,7 @@ layui.use
                 return false;
             }
         );
-        form.on
+        form.on // 济南→沂水
         (
             'submit(quick1)',
             function (data)
@@ -57,6 +81,22 @@ layui.use
                 }
 
                 generateDataList(table, '37010001', '济南', '沂水', quick1Date);
+                return false;
+            }
+        );
+        form.on // 沂水→济南
+        (
+            'submit(quick2)',
+            function (data)
+            {
+                let quick2Date = data.field.quick2date;
+                if (typeof quick2Date==="undefined" || quick2Date===null || quick2Date==='')
+                {
+                    layer.alert("出发日期未填", {title: '错误信息'});
+                    return false;
+                }
+
+                generateDataList(table, '37130005', '沂水', '济南', quick2Date);
                 return false;
             }
         );
@@ -91,4 +131,34 @@ function generateDataList(table, startCityId, startCityName, endCityName, startD
                 ]
         }
     );
+}
+
+/**
+ * 格式化日期时间
+ * @param date    日期时间
+ * @param pattern 要格式化成的格式
+ * @returns 格式化后的字符串
+ */
+function dateFormat(date, pattern)
+{
+    let ret;
+    const opt =
+    {
+        "Y+": date.getFullYear().toString(),        // 年
+        "m+": (date.getMonth() + 1).toString(),     // 月
+        "d+": date.getDate().toString(),            // 日
+        "H+": date.getHours().toString(),           // 时
+        "M+": date.getMinutes().toString(),         // 分
+        "S+": date.getSeconds().toString()          // 秒
+        // 有其他格式化字符需求可以继续添加，必须转化成字符串
+    };
+    for (let k in opt)
+    {
+        ret = new RegExp("(" + k + ")").exec(pattern);
+        if (ret)
+        {
+            pattern = pattern.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+        };
+    };
+    return pattern;
 }

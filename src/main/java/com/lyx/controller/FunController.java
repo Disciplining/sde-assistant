@@ -28,4 +28,14 @@ public class FunController
     {
         return funService.getData(startCityId, startCityName, endCityName, startDate);
     }
+
+    /**
+     * 获得要缓存的，出发地点的数据.
+     * @return 出发地点的数据
+     */
+    @GetMapping("/getCacheStartPoint")
+    public CommonResult getCacheStartPoint()
+    {
+        return funService.getCacheStartPoint();
+    }
 }

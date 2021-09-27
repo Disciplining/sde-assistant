@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.lyx.common.CommonResult;
 import com.lyx.common.InvokeSDEConfig;
@@ -120,5 +121,31 @@ public class FunService
         infoItemVo.setStationName(one.get("stationName").asText());
 
         return infoItemVo;
+    }
+
+    /**
+     * 获得要缓存的，出发地点的数据.
+     * @return 出发地点的数据
+     */
+    public CommonResult getCacheStartPoint()
+    {
+        CommonResult<JsonNode> resp = invokeSDEConfig.get("/startPoint?ttsId=");
+        if (!resp.isSuccess())
+        {
+            return resp;
+        }
+
+        ArrayNode result = oMapper.createArrayNode();
+
+        JsonNode data = resp.getData();
+        for (JsonNode oneArray : data)
+        {
+            for (JsonNode el : oneArray)
+            {
+                result.add(el);
+            }
+        }
+
+        return CommonResult.successData(result);
     }
 }

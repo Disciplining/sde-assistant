@@ -1,26 +1,3 @@
-/**
- * 缓存出发地点
- */
-$.ajax
-(
-    {
-        url : 'https://m.xintuyun.cn/book/startPoint?ttsId=', //请求的url
-        type : 'GET', //以何种方法发送报文
-        dataType : 'json', //预期的服务器返回的数据类型
-        success : function () //请求成功执行的访求
-        {
-            console.log('请求成功');
-        },
-        error : function () //请求失败执行的方法
-        {
-            console.log('缓存出发地点');
-        }
-    }
-);
-
-
-
-
 layui.use
 (
     ['form', 'layer', 'laydate', 'table'],
@@ -31,6 +8,9 @@ layui.use
         var layer = layui.layer;
         var laydate = layui.laydate;
         var table = layui.table;
+
+        // ②缓存出发地点
+        let startPointList = getCacheStartPoint();
 
         // ②日期组件
         laydate.render({elem: '#startDate', min: dateFormat(new Date(), 'yyyy-MM-dd')});
@@ -62,6 +42,33 @@ layui.use
                     layer.alert("存在未填项", {title: '错误信息'});
                     return false;
                 }
+
+                // 根据出发城市名获取 出发城市名称、出发城市id
+                console.log('到这里了---', startPointList);
+                let theStartPoint;
+                $.each
+                (
+                    startPointList,
+                    function (index, value)
+                    {
+                        console.log("这是坐标：", index);
+
+                        if (obj.startCityName.indexOf(value.name) >= 0)
+                        {
+                            theStartPoint = value;
+                            return false;
+                        }
+                    }
+                )
+                console.log('获得the:', theStartPoint);
+
+
+
+
+
+
+
+
 
                 // 生成数据列表
                 generateDataList(table, obj.startCityId, obj.startCityName, obj.endCityName, obj.startDate);
@@ -161,4 +168,32 @@ function dateFormat(date, pattern)
         };
     };
     return pattern;
+}
+
+/**
+ * 获得需要缓存下来的出发地点.
+ */
+function getCacheStartPoint(layer)
+{
+    let startPointList;
+
+    $.ajax
+    (
+        {
+            url : '/getCacheStartPoint', //请求的url
+            type : 'GET', //以何种方法发送报文
+            async: false,
+            dataType : 'json', //预期的服务器返回的数据类型
+            success : function (data) //请求成功执行的访求
+            {
+                startPointList = data.data;
+            },
+            error : function () //请求失败执行的方法
+            {
+                layer.alert("获取出发地点出错", {title: '错误信息'});
+            }
+        }
+    );
+
+    return startPointList;
 }

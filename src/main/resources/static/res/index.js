@@ -43,7 +43,7 @@ layui.use
                     return false;
                 }
 
-                // 根据出发城市名获取 出发城市名称、出发城市id
+                // 根据出发城市名获取 出发point
                 console.log('到这里了---', startPointList);
                 let theStartPoint;
                 $.each
@@ -61,17 +61,15 @@ layui.use
                     }
                 )
                 console.log('获得the:', theStartPoint);
-
-
-
-
-
-
-
+                if (typeof(theStartPoint) === "undefined")
+                {
+                    layer.alert("不存在此出发地点", {title: '错误信息'});
+                    return false;
+                }
 
 
                 // 生成数据列表
-                generateDataList(table, obj.startCityId, obj.startCityName, obj.endCityName, obj.startDate);
+                generateDataList(table, theStartPoint.id, theStartPoint.name, obj.endCityName, obj.startDate);
                 return false;
             }
         );
@@ -127,15 +125,15 @@ function generateDataList(table, startCityId, startCityName, endCityName, startD
             url:'/get-data?startCityId=' + startCityId + '&startCityName=' + startCityName + '&endCityName=' + endCityName + '&startDate=' + startDate,
             cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
             cols:
+            [
                 [
-                    [
-                        {field:'leftSeatNum', title: '剩余车票'},
-                        {field:'shiftNum', title: '车次'},
-                        {field:'sendTime', title: '发车时间'},
-                        {field:'workOvertime', title: '是否为加班'},
-                        {field:'stationName', title: '始发车站'}
-                    ]
+                    {field:'leftSeatNum', title: '剩余车票'},
+                    {field:'shiftNum', title: '车次'},
+                    {field:'sendTime', title: '发车时间'},
+                    {field:'workOvertime', title: '是否为加班'},
+                    {field:'stationName', title: '始发车站'}
                 ]
+            ]
         }
     );
 }

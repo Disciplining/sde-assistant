@@ -153,9 +153,9 @@ public class FunService
      * 获得要缓存的，结束地点的数据.
      * @return 终点地址的数据
      */
-    public CommonResult getCacheEndPoint()
+    public CommonResult getCacheEndPoint(String startId)
     {
-        CommonResult<JsonNode> resp = invokeSDEConfig.get("/endPoint?departure=37010001&ttsId=");
+        CommonResult<JsonNode> resp = invokeSDEConfig.get("/endPoint?departure={p}&ttsId=", startId);
         if (!resp.isSuccess())
         {
             return resp;

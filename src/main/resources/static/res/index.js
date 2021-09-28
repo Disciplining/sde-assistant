@@ -9,13 +9,14 @@ layui.use
         var laydate = layui.laydate;
         var table = layui.table;
 
-        // ②缓存出发地点
-        let startPointList = getCacheStartPoint();
-
-        // ②日期组件
+        // ②渲染日期组件
         laydate.render({elem: '#startDate', min: dateFormat(new Date(), 'yyyy-MM-dd')});
         laydate.render({elem: '#quick1date', min: dateFormat(new Date(), 'yyyy-MM-dd')});
         laydate.render({elem: '#quick2date', min: dateFormat(new Date(), 'yyyy-MM-dd')});
+
+        // ②缓存出发地点 与 定义结束地点变量
+        let startPointList = getCacheStartPoint();
+        let endNameList;
 
         // ③监听提交
         form.on // 任意地址
@@ -23,7 +24,7 @@ layui.use
             'submit(search)',
             function(data)
             {
-                // 检查是否为空
+                // 1.检查是否为空
                 let obj = data.field;
                 let haveBlank = false;
                 Object.keys(obj).forEach
@@ -43,16 +44,13 @@ layui.use
                     return false;
                 }
 
-                // 根据出发城市名获取 出发point
-                console.log('到这里了---', startPointList);
+                // 2.根据用户输入的起点名称，获取出发point.
                 let theStartPoint;
                 $.each
                 (
                     startPointList,
                     function (index, value)
                     {
-                        console.log("这是坐标：", index);
-
                         if (obj.startCityName.indexOf(value.name) >= 0)
                         {
                             theStartPoint = value;
@@ -60,16 +58,49 @@ layui.use
                         }
                     }
                 )
-                console.log('获得the:', theStartPoint);
                 if (typeof(theStartPoint) === "undefined")
                 {
                     layer.alert("不存在此出发地点", {title: '错误信息'});
                     return false;
                 }
 
+                // 3.获取到出发point后，根据出发城市的id获取终点名称list
+                $.ajax
+                (
+                    {
+                        url : '/getCacheEndPoint?startId=' + theStartPoint.id, //请求的url
+                        async: false,
+                        type : 'GET', //以何种方法发送报文
+                        dataType : 'json', //预期的服务器返回的数据类型
+                        success : function (data) //请求成功执行的访求
+                        {
+                            endNameList = data.data;
+                        },
+                        error : function () //请求失败执行的方法
+                        {
+                            layer.alert("获取出发地点出错", {title: '错误信息'});
+                        }
+                    }
+                );
 
-                // 生成数据列表
-                generateDataList(table, theStartPoint.id, theStartPoint.name, obj.endCityName, obj.startDate);
+                // 4.根据用户输入的终点名称，从终点名称list中获取实际的出发名称
+                let theEndName;
+                for (let endName of endNameList)
+                {
+                    if (obj.endCityName.indexOf(endName) >= 0)
+                    {
+                        theEndName = endName;
+                        break;
+                    }
+                }
+                if (typeof(theEndName) === "undefined")
+                {
+                    layer.alert("不存在此终点", {title: '错误信息'});
+                    return false;
+                }
+
+                // 5.生成数据列表
+                generateDataList(table, theStartPoint.id, theStartPoint.name, theEndName, obj.startDate);
                 return false;
             }
         );
@@ -129,9 +160,9 @@ function generateDataList(table, startCityId, startCityName, endCityName, startD
                 [
                     {field:'leftSeatNum', title: '剩余车票'},
                     {field:'shiftNum', title: '车次'},
-                    {field:'sendTime', title: '发车时间'},
+                    {field:'sendTime', title: '发车时间', sort: true},
                     {field:'workOvertime', title: '是否为加班'},
-                    {field:'stationName', title: '始发车站'}
+                    {field:'stationName', title: '始发车站', sort: true}
                 ]
             ]
         }

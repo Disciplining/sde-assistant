@@ -41,11 +41,12 @@ public class FunController
 
     /**
      * 获得要缓存的，结束地点的数据.
+     * @param startId 出发地点的id
      * @return 终点地址的数据
      */
     @GetMapping("/getCacheEndPoint")
-    public CommonResult getCacheEndPoint()
+    public CommonResult getCacheEndPoint(@RequestParam String startId)
     {
-        return funService.getCacheEndPoint();
+        return funService.getCacheEndPoint(startId);
     }
 }

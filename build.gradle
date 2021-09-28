@@ -5,8 +5,8 @@ plugins {
 }
 
 group = 'com.lyx'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+version = '1.0'
+sourceCompatibility = '8'
 
 repositories {
     maven{ url 'https://maven.aliyun.com/nexus/content/groups/public/' }

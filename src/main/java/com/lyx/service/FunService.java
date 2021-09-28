@@ -148,4 +148,29 @@ public class FunService
 
         return CommonResult.successData(result);
     }
+
+    /**
+     * 获得要缓存的，结束地点的数据.
+     * @return 终点地址的数据
+     */
+    public CommonResult getCacheEndPoint()
+    {
+        CommonResult<JsonNode> resp = invokeSDEConfig.get("/endPoint?departure=37010001&ttsId=");
+        if (!resp.isSuccess())
+        {
+            return resp;
+        }
+
+        List<String> endNameList = CollUtil.newArrayList();
+        JsonNode dataNode = resp.getData();
+        for (JsonNode oneArray : dataNode)
+        {
+            for (JsonNode innerArray : oneArray)
+            {
+                endNameList.add(innerArray.get(0).asText());
+            }
+        }
+
+        return CommonResult.successData(endNameList);
+    }
 }

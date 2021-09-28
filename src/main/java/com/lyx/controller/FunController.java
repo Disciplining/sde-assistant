@@ -38,4 +38,14 @@ public class FunController
     {
         return funService.getCacheStartPoint();
     }
+
+    /**
+     * 获得要缓存的，结束地点的数据.
+     * @return 终点地址的数据
+     */
+    @GetMapping("/getCacheEndPoint")
+    public CommonResult getCacheEndPoint()
+    {
+        return funService.getCacheEndPoint();
+    }
 }

@@ -24,6 +24,7 @@ layui.use
             'submit(search)',
             function(data)
             {
+                clearContent(0);
                 // 1.检查是否为空
                 let obj = data.field;
                 let haveBlank = false;
@@ -109,6 +110,7 @@ layui.use
             'submit(quick1)',
             function (data)
             {
+                clearContent(1);
                 let quick1Date = data.field.quick1date;
                 if (typeof quick1Date==="undefined" || quick1Date===null || quick1Date==='')
                 {
@@ -125,6 +127,7 @@ layui.use
             'submit(quick2)',
             function (data)
             {
+                clearContent(2);
                 let quick2Date = data.field.quick2date;
                 if (typeof quick2Date==="undefined" || quick2Date===null || quick2Date==='')
                 {
@@ -225,4 +228,37 @@ function getCacheStartPoint(layer)
     );
 
     return startPointList;
+}
+
+/**
+ * 三个表单，当一个表单提交时，清除另外两个
+ * @param which 提交的那个表单 0-任意地点  1-济南→沂水  2-沂水→济南
+ */
+function clearContent(which)
+{
+    switch (which)
+    {
+        case 0:
+        {
+            $('#quick1date').val('');
+            $('#quick2date').val('');
+            break;
+        }
+        case 1:
+        {
+            $('#startCityName').val('');
+            $('#endCityName').val('');
+            $('#startDate').val('');
+            $('#quick2date').val('');
+            break;
+        }
+        case 2:
+        {
+            $('#startCityName').val('');
+            $('#endCityName').val('');
+            $('#startDate').val('');
+            $('#quick1date').val('');
+            break;
+        }
+    }
 }
